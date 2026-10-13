@@ -1,0 +1,7 @@
+[settings]
+# Keep reading .node-version, .python-version and .ruby-version files in projects, as asdf did.
+idiomatic_version_file_enable_tools = ["node", "python", "ruby"]
+
+[tools]
+node = "20.19.0"
+python = "3.12.3"

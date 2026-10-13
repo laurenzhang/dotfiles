@@ -1,4 +1,4 @@
-PACKAGES := asdf brew claude editorconfig git nvim tmux zsh
+PACKAGES := brew claude editorconfig git mise nvim tmux zsh
 
 .PHONY: plan stow unstow restow brew check
 

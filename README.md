@@ -4,7 +4,7 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/). 
 
 | Package | Links into `$HOME` |
 |---|---|
-| `asdf` | `.asdfrc`, `.tool-versions` |
+| `mise` | `.config/mise/config.toml` |
 | `brew` | `.Brewfile` (install with `make brew`) |
 | `claude` | `~/.claude/skills/*` |
 | `editorconfig` | `.editorconfig` (applies to every repo under `$HOME` that lacks its own) |
@@ -30,14 +30,14 @@ The script checks before each step, so it is safe to re-run. It:
 2. Does a dry run of `stow`, then links the packages. If a file such as `~/.gitconfig` already exists, it lists the conflicts and stops without changing anything. Move those files aside and run it again.
 3. Installs oh-my-zsh and the tmux plugin manager (tpm), and creates `~/.gitconfig.local`.
 
-On Linux it also installs `zsh` and `stow` with apt, writes the Linux path for the `gh` credential helper into `~/.gitconfig.local`, and sets zsh as the login shell. It skips the `asdf` and `brew` packages there, because the pinned versions would override the machine's own runtimes.
+On Linux it also installs `zsh` and `stow` with apt, writes the Linux path for the `gh` credential helper into `~/.gitconfig.local`, and sets zsh as the login shell. It skips the `mise` and `brew` packages there, because the pinned versions would override the machine's own runtimes.
 
 When it finishes:
 
 1. Open a new shell.
 2. In tmux, press the prefix (`Ctrl-b`), then `Shift-i` to install the plugins.
 3. Open `nvim`. The first launch installs the plugins at the versions pinned in `lazy-lock.json`.
-4. On macOS, install the runtimes pinned in `.tool-versions`: `asdf plugin add nodejs && asdf plugin add python && asdf install`
+4. On macOS, install the runtimes pinned in `~/.config/mise/config.toml`: `mise install`
 
 On managed workstations where only `/home` survives, the apt packages and login shell are wiped at boot, but everything under `/home` stays. `scripts/workstation-boot.sh` re-applies this repo and logs to `~/.local/state/dotfiles/boot.log`. It never blocks boot: a failure is logged and the script exits 0. Run `bootstrap.sh` once by hand first, so the slow first install (Homebrew, Neovim) happens outside the boot hook. Then point the hook at the boot script. On Google Cloud Workstations the hook is `~/.workstation/customize_environment`:
 

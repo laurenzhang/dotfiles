@@ -106,7 +106,8 @@ source $ZSH/oh-my-zsh.sh
 # Use Vim key bindings
 bindkey -v
 
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+# Runtime versions (node, python, ...) come from mise.
+command -v mise > /dev/null && eval "$(mise activate zsh)"
 
 alias kctx='kubectx'
 alias k='kubectl'

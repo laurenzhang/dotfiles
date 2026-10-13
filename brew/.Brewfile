@@ -1,5 +1,4 @@
 # Install with: brew bundle --global
-brew "asdf"
 brew "ccat"
 brew "coreutils"
 brew "curl"
@@ -19,6 +18,7 @@ brew "kubectx"
 brew "lefthook"
 brew "lf"
 brew "libyaml"
+brew "mise"
 brew "mysql"
 brew "neovim"
 brew "ripgrep"

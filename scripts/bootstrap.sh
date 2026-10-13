@@ -15,11 +15,11 @@ die() { printf 'error: %s\n' "$*" >&2; exit 1; }
 case "$os" in
   Darwin)
     brewfile="$repo/brew/.Brewfile"
-    stow_packages=(asdf brew claude editorconfig git nvim tmux zsh)
+    stow_packages=(brew claude editorconfig git mise nvim tmux zsh)
     ;;
   Linux)
     brewfile="$repo/workstation/Brewfile"
-    # asdf is left out because its pinned versions would override the workstation's own runtimes.
+    # mise is left out because its pinned versions would override the workstation's own runtimes.
     stow_packages=(claude editorconfig git nvim tmux zsh)
     apt_packages=(build-essential curl file git procps stow zsh)
     ;;
@@ -112,4 +112,4 @@ fi
 log "done"
 git config --file "$local_git" user.email > /dev/null || echo "Set your email: git config --file ~/.gitconfig.local user.email <address>"
 echo "Open a new shell. In tmux, press prefix then Shift-i to install plugins. Open nvim to finish the plugin install."
-if [ "$os" = Darwin ]; then echo "Then: asdf plugin add nodejs && asdf plugin add python && asdf install"; fi
+if [ "$os" = Darwin ]; then echo "Then: mise install"; fi
