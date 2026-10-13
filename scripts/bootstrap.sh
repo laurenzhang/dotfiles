@@ -94,7 +94,11 @@ if [ ! -e "$local_git" ]; then
   log "creating $local_git"
   {
     # The tracked .gitconfig points at the macOS path of gh; this include overrides it on Linux.
-    if [ "$os" = Linux ]; then printf '[credential "https://github.com"]\n\thelper =\n\thelper = !gh auth git-credential\n'; fi
+    if [ "$os" = Linux ]; then
+      for host in github.com gist.github.com; do
+        printf '[credential "https://%s"]\n\thelper =\n\thelper = !gh auth git-credential\n' "$host"
+      done
+    fi
     if [ -n "${GIT_EMAIL:-}" ]; then printf '[user]\n\temail = %s\n' "$GIT_EMAIL"; fi
   } > "$local_git"
 fi
