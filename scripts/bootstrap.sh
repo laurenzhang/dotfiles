@@ -29,7 +29,8 @@ esac
 if [ "$os" = Linux ]; then
   missing=()
   for package in "${apt_packages[@]}"; do
-    dpkg --status "$package" > /dev/null 2>&1 || missing+=("$package")
+    # dpkg --status also succeeds for a removed package whose config files remain.
+    [ "$(dpkg-query --show --showformat='${db:Status-Status}' "$package" 2> /dev/null)" = installed ] || missing+=("$package")
   done
   if [ "${#missing[@]}" -gt 0 ]; then
     log "installing apt packages: ${missing[*]}"
