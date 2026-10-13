@@ -26,6 +26,7 @@ brew "stow"
 brew "the_silver_searcher"
 brew "tlrc" # provides the `tldr` command
 brew "tmux"
+brew "tree-sitter-cli" # from brew, not Mason: downloaded binaries can be blocked on managed Macs
 brew "uv"
 cask "1password-cli"
 cask "font-hack-nerd-font"
