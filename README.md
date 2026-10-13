@@ -39,13 +39,7 @@ When it finishes:
 3. Open `nvim`. The first launch installs the plugins at the versions pinned in `lazy-lock.json`.
 4. On macOS, install the runtimes pinned in `~/.config/mise/config.toml`: `mise install`
 
-On managed workstations where only `/home` survives, the apt packages and login shell are wiped at boot, but everything under `/home` stays. `scripts/workstation-boot.sh` re-applies this repo and logs to `~/.local/state/dotfiles/boot.log`. It never blocks boot: a failure is logged and the script exits 0. Run `bootstrap.sh` once by hand first, so the slow first install (Homebrew, Neovim) happens outside the boot hook. Then point the hook at the boot script. On Google Cloud Workstations the hook is `~/.workstation/customize_environment`:
-
-```sh
-mkdir -p ~/.workstation && printf '#!/bin/bash\nexec /home/user/dotfiles/scripts/workstation-boot.sh\n' > ~/.workstation/customize_environment && chmod +x ~/.workstation/customize_environment
-```
-
-If `~/.workstation` is owned by root, run `sudo chown "$USER" ~/.workstation` first. Change `/home/user/dotfiles` if your user or clone path differs. The boot script does not pull updates; run `git pull` in the clone when you want them.
+On workstations where only `/home` survives a restart, the apt packages and login shell are reset. Re-run `scripts/bootstrap.sh` after a restart to restore them.
 
 ## Files that stay out of the repo
 
