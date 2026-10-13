@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Refuses pushes to main, master and production, then runs the repository's own pre-push hook if it has one.
+# Override once with: git push --no-verify
+set -u
+
+refs="$(cat)"
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main | refs/heads/master | refs/heads/production)
+      echo "pre-push: refusing to push to '${remote_ref#refs/heads/}' from this machine. Push a branch and open a pull request." >&2
+      exit 1
+      ;;
+  esac
+done <<< "$refs"
+
+repo_hook="$(git rev-parse --git-common-dir)/hooks/pre-push"
+if [ -x "$repo_hook" ]; then
+  printf '%s\n' "$refs" | "$repo_hook" "$@"
+fi

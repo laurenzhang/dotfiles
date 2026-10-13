@@ -10,6 +10,7 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/). 
 | `editorconfig` | `.editorconfig` (applies to every repo under `$HOME` that lacks its own) |
 | `git` | `.gitconfig`, `.config/git/ignore` |
 | `nvim` | `.config/nvim` (LazyVim) |
+| `pi` | `.pi/agent/AGENTS.md` (Linux only) |
 | `tmux` | `.tmux.conf` (vi copy mode, mouse, reload; plugins need [tpm](https://github.com/tmux-plugins/tpm) cloned to `~/.tmux/plugins/tpm`) |
 | `zsh` | `.zshrc`, `.zprofile` |
 
@@ -30,7 +31,7 @@ The script checks before each step, so it is safe to re-run. It:
 2. Does a dry run of `stow`, then links the packages. If a file such as `~/.gitconfig` already exists, it lists the conflicts and stops without changing anything. Move those files aside and run it again.
 3. Installs oh-my-zsh and the tmux plugin manager (tpm), and creates `~/.gitconfig.local`.
 
-On Linux it also installs `zsh` and `stow` with apt, writes the Linux path for the `gh` credential helper into `~/.gitconfig.local`, and sets zsh as the login shell. It skips the `mise` and `brew` packages there, because the pinned versions would override the machine's own runtimes.
+On Linux it also installs `zsh` and `stow` with apt, writes the Linux path for the `gh` credential helper into `~/.gitconfig.local`, and sets zsh as the login shell. It skips the `mise` and `brew` packages there, because the pinned versions would override the machine's own runtimes. It also sets a global git hook that refuses pushes to `main`, `master` and `production` (override once with `git push --no-verify`; each repository's own hooks still run), and installs the [Pi](https://pi.dev) coding agent under `~/.local` when Node 22.19 or newer is present. Global rules for Pi live in `~/.pi/agent/AGENTS.md`. Pi's model providers and credentials are set up by hand and stay out of this repo.
 
 When it finishes:
 

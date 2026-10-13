@@ -20,7 +20,7 @@ case "$os" in
   Linux)
     brewfile="$repo/workstation/Brewfile"
     # mise is left out because its pinned versions would override the workstation's own runtimes.
-    stow_packages=(claude editorconfig git nvim tmux zsh)
+    stow_packages=(claude editorconfig git nvim pi tmux zsh)
     apt_packages=(build-essential curl file git procps stow zsh)
     ;;
   *) die "unsupported OS: $os" ;;
@@ -38,6 +38,22 @@ if [ "$os" = Linux ]; then
     sudo apt-get install --yes "${missing[@]}"
   fi
 fi
+
+# Pi needs Node 22.19 or newer. Install under ~/.local, because only /home survives a restart on a workstation.
+install_pi() {
+  local want=22.19.0 have
+  if ! command -v node > /dev/null || ! command -v npm > /dev/null; then
+    echo "Skipping Pi: node and npm were not found"
+    return 0
+  fi
+  have="$(node --version | sed 's/^v//')"
+  if [ "$(printf '%s\n%s\n' "$want" "$have" | sort --version-sort | head --lines=1)" != "$want" ]; then
+    echo "Skipping Pi: it needs Node $want or newer and this is $have"
+    return 0
+  fi
+  log "installing Pi"
+  npm install --global --prefix "$HOME/.local" --ignore-scripts @earendil-works/pi-coding-agent || echo "Pi install failed; re-run this script to retry"
+}
 
 find_brew() {
   local candidate
@@ -68,6 +84,8 @@ brew bundle --no-upgrade --file="$brewfile"
 
 # Link into directories that already exist so tools that write there (such as Claude Code) do not write into this repo.
 mkdir -p "$HOME/.claude/skills" "$HOME/.config"
+# Pi stores credentials and sessions next to the linked AGENTS.md, so link only that file into this directory.
+if [ "$os" = Linux ]; then mkdir -p "$HOME/.pi/agent"; fi
 
 log "checking for files that stow would overwrite"
 cd "$repo"
@@ -104,6 +122,12 @@ if [ ! -e "$local_git" ]; then
 fi
 
 if [ "$os" = Linux ]; then
+  # Refuses pushes to main, master and production; see git/.config/git/hooks.
+  git config --file "$local_git" core.hooksPath "$HOME/.config/git/hooks"
+  if [ ! -x "$HOME/.local/bin/pi" ]; then install_pi; fi
+fi
+
+if [ "$os" = Linux ]; then
   zsh_bin="$(command -v zsh)"
   user_name="$(id -un)"
   if [ "$(getent passwd "$user_name" | cut -d: -f7)" != "$zsh_bin" ]; then
@@ -117,3 +141,4 @@ log "done"
 git config --file "$local_git" user.email > /dev/null || echo "Set your email: git config --file ~/.gitconfig.local user.email <address>"
 echo "Open a new shell. In tmux, press prefix then Shift-i to install plugins. Open nvim to finish the plugin install."
 if [ "$os" = Darwin ]; then echo "Then: mise install"; fi
+if [ "$os" = Linux ] && [ -x "$HOME/.local/bin/pi" ]; then echo "Pi is installed. Add a model provider in ~/.pi/agent/models.json, then run pi inside tmux."; fi

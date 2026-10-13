@@ -3,3 +3,6 @@
 *.local
 **/LOCAL.md
 secrets*
+# Pi writes credentials, model config and sessions next to AGENTS.md
+pi/.pi/agent/*
+!pi/.pi/agent/AGENTS.md
