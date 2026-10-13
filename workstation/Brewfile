@@ -1,4 +1,4 @@
-# Tools for a Linux workstation. Installed by scripts/workstation-bootstrap.sh.
+# Tools for a Linux workstation. Installed by scripts/bootstrap.sh.
 # fzf comes from here because the apt version is too old for `fzf --zsh`.
 brew "ccat"
 brew "fzf"

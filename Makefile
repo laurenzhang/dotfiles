@@ -22,7 +22,7 @@ brew:
 check:
 	scripts/check-private.sh
 
-.PHONY: workstation
-# set up a Linux workstation (see README)
-workstation:
-	scripts/workstation-bootstrap.sh
+.PHONY: bootstrap
+# set up this machine (macOS or Ubuntu; see README)
+bootstrap:
+	scripts/bootstrap.sh

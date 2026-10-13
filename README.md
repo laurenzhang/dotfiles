@@ -13,60 +13,33 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/). 
 | `tmux` | `.tmux.conf` (vi copy mode, mouse, reload; plugins need [tpm](https://github.com/tmux-plugins/tpm) cloned to `~/.tmux/plugins/tpm`) |
 | `zsh` | `.zshrc`, `.zprofile` |
 
-## Setup on a new laptop
+## Setup
 
-1. Install [Homebrew](https://brew.sh), then clone this repo to `~/dotfiles` and install the packages:
-
-   ```sh
-   git clone https://github.com/laurenzhang/dotfiles ~/dotfiles && cd ~/dotfiles
-   brew bundle --file=brew/.Brewfile
-   ```
-
-2. Install oh-my-zsh, which `.zshrc` loads. The two variables stop the installer from replacing `.zshrc`:
-
-   ```sh
-   RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-   ```
-
-3. Create the untracked files from the section below, at least `~/.gitconfig.local` so commits have an email.
-
-4. Link everything. Move or delete any existing file that `make plan` reports as a conflict first, because stow aborts if any file conflicts.
-
-   ```sh
-   make plan
-   make stow
-   ```
-
-5. Install the language runtimes pinned in `.tool-versions`:
-
-   ```sh
-   asdf plugin add nodejs
-   asdf plugin add python
-   asdf install
-   ```
-
-6. Install the tmux plugin manager, then press `prefix I` inside tmux to install the plugins:
-
-   ```sh
-   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-   ```
-
-7. Open `nvim`. The first launch installs the plugins at the commits pinned in `lazy-lock.json`, and downloads the treesitter parsers and Mason tools in the background. `:Lazy update` moves the plugins forward and rewrites the lockfile.
-
-## Linux workstation
-
-`scripts/workstation-bootstrap.sh` sets up an Ubuntu workstation. Run it as your normal user, not root. It uses sudo only to install apt packages and set the login shell.
+Works on macOS and Ubuntu.
 
 ```sh
 git clone https://github.com/laurenzhang/dotfiles ~/dotfiles
-GIT_EMAIL=you@example.com ~/dotfiles/scripts/workstation-bootstrap.sh
+GIT_EMAIL=you@example.com ~/dotfiles/scripts/bootstrap.sh
 ```
 
-It installs `zsh` and `stow` with apt, installs Linuxbrew and the tools in `workstation/Brewfile` (including a recent Neovim), links every package except `asdf` and `brew`, installs oh-my-zsh and tpm, and writes `~/.gitconfig.local` with the Linux path for the `gh` credential helper. Every step checks before it acts, so it is safe to re-run.
+On a new Mac, the first `git` command offers to install the Command Line Tools; accept it. Run the script as your normal user, not root. `GIT_EMAIL` is optional and writes `user.email` into `~/.gitconfig.local` the first time.
 
-If a file such as `~/.gitconfig` already exists, the script lists the conflicts and stops without changing anything. Move those files aside and run it again.
+The script checks before each step, so it is safe to re-run. It:
 
-On workstations where only `/home` survives an image update, the apt packages and login shell are wiped, but everything under `/home` stays. Re-running the script restores the rest. To do that on every boot, call the script from the workstation's boot hook as your normal user.
+1. Installs Homebrew (Linuxbrew on Linux) if it is missing, then the packages in `brew/.Brewfile` on macOS or `workstation/Brewfile` on Linux. It never upgrades packages that are already installed.
+2. Does a dry run of `stow`, then links the packages. If a file such as `~/.gitconfig` already exists, it lists the conflicts and stops without changing anything. Move those files aside and run it again.
+3. Installs oh-my-zsh and the tmux plugin manager (tpm), and creates `~/.gitconfig.local`.
+
+On Linux it also installs `zsh` and `stow` with apt, writes the Linux path for the `gh` credential helper into `~/.gitconfig.local`, and sets zsh as the login shell. It skips the `asdf` and `brew` packages there, because the pinned versions would override the machine's own runtimes.
+
+When it finishes:
+
+1. Open a new shell.
+2. In tmux, press the prefix (`Ctrl-b`), then `Shift-i` to install the plugins.
+3. Open `nvim`. The first launch installs the plugins at the versions pinned in `lazy-lock.json`.
+4. On macOS, install the runtimes pinned in `.tool-versions`: `asdf plugin add nodejs && asdf plugin add python && asdf install`
+
+On managed workstations where only `/home` survives an image update, the apt packages and login shell are wiped but everything under `/home` stays. Re-running the script restores the rest, so it can be called from the machine's boot hook as your normal user.
 
 ## Files that stay out of the repo
 
