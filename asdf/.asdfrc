@@ -1,0 +1,3 @@
+
+# Allow using .ruby-version, .node-version
+legacy_version_file = yes

@@ -1,0 +1,5 @@
+.DS_Store
+# per-machine and private files
+*.local
+**/LOCAL.md
+secrets*
