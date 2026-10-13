@@ -53,6 +53,21 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/). 
 
 7. Open `nvim`. The first launch installs the plugins at the commits pinned in `lazy-lock.json`, and downloads the treesitter parsers and Mason tools in the background. `:Lazy update` moves the plugins forward and rewrites the lockfile.
 
+## Linux workstation
+
+`scripts/workstation-bootstrap.sh` sets up an Ubuntu workstation. Run it as your normal user, not root. It uses sudo only to install apt packages and set the login shell.
+
+```sh
+git clone https://github.com/laurenzhang/dotfiles ~/dotfiles
+GIT_EMAIL=you@example.com ~/dotfiles/scripts/workstation-bootstrap.sh
+```
+
+It installs `zsh` and `stow` with apt, installs Linuxbrew and the tools in `workstation/Brewfile` (including a recent Neovim), links every package except `asdf` and `brew`, installs oh-my-zsh and tpm, and writes `~/.gitconfig.local` with the Linux path for the `gh` credential helper. Every step checks before it acts, so it is safe to re-run.
+
+If a file such as `~/.gitconfig` already exists, the script lists the conflicts and stops without changing anything. Move those files aside and run it again.
+
+On workstations where only `/home` survives an image update, the apt packages and login shell are wiped, but everything under `/home` stays. Re-running the script restores the rest. To do that on every boot, call the script from the workstation's boot hook as your normal user.
+
 ## Files that stay out of the repo
 
 Per-machine and private settings live in untracked files that the tracked config includes if present.

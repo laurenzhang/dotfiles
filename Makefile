@@ -21,3 +21,8 @@ brew:
 # scan for secrets and private terms before pushing
 check:
 	scripts/check-private.sh
+
+.PHONY: workstation
+# set up a Linux workstation (see README)
+workstation:
+	scripts/workstation-bootstrap.sh

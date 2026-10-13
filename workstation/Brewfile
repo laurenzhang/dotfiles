@@ -1,0 +1,9 @@
+# Tools for a Linux workstation. Installed by scripts/workstation-bootstrap.sh.
+# fzf comes from here because the apt version is too old for `fzf --zsh`.
+brew "ccat"
+brew "fzf"
+brew "lf"
+brew "neovim"
+brew "ripgrep"
+brew "tlrc" # provides the `tldr` command
+brew "tree-sitter-cli"
