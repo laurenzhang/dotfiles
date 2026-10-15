@@ -132,6 +132,8 @@ if [ "$os" = Linux ]; then
   # Refuses pushes to main, master and production; see git/.config/git/hooks.
   git config --file "$local_git" core.hooksPath "$HOME/.config/git/hooks"
   if [ ! -x "$HOME/.local/bin/pi" ]; then install_pi; fi
+  # Pi rewrites settings.json and its directory holds credentials, so defaults are merged in rather than linked.
+  if [ -x /usr/bin/python3 ]; then /usr/bin/python3 "$repo/scripts/merge-pi-settings.py" || echo "Pi settings not merged; fix ~/.pi/agent/settings.json and re-run"; fi
 fi
 
 if [ "$os" = Linux ]; then

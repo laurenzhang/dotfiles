@@ -42,6 +42,10 @@ When it finishes:
 
 On workstations where only `/home` survives a restart, the apt packages and login shell are reset. Re-run `scripts/bootstrap.sh` after a restart to restore them.
 
+## Pi on a workstation
+
+`workstation/pi-settings.json` holds Pi settings that `scripts/bootstrap.sh` merges into `~/.pi/agent/settings.json` when a key is not already set. `tuiMode: regular` lets the terminal select and copy text; in Pi's default fullscreen mode, Pi captures the mouse and copying does not reach the clipboard. tmux has the same limit when its mouse mode is on, so press `<prefix> m` to turn it off before selecting text. Neither tmux-yank nor OSC 52 reach a local clipboard from a headless workstation.
+
 ## Claude Code guard
 
 `claude/.claude/hooks/guard.py` is a PreToolUse hook for Bash. It denies pushes to main, master and production, force-pushes without `--force-with-lease`, `gh api` writes, `gh pr comment/review/merge`, `gh issue comment`, `gh repo delete`, `gh secret set`, and `terraform apply/destroy/import/state`. Unlike a permission deny list it still runs when prompts are off. `scripts/bootstrap.sh` registers it in `~/.claude/settings.json` without touching other settings. To allow a rule, start Claude Code with `CLAUDE_GUARD_OVERRIDE=<rule>` set. A bare `git push` is not checked; the git `pre-push` hook covers it. Run `make test` after editing the hook.
