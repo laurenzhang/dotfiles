@@ -83,7 +83,7 @@ log "installing Homebrew packages"
 brew bundle --no-upgrade --file="$brewfile"
 
 # Link into directories that already exist so tools that write there (such as Claude Code) do not write into this repo.
-mkdir -p "$HOME/.claude/skills" "$HOME/.config"
+mkdir -p "$HOME/.claude/skills" "$HOME/.claude/hooks" "$HOME/.config"
 # Pi stores credentials and sessions next to the linked AGENTS.md, so link only that file into this directory.
 if [ "$os" = Linux ]; then mkdir -p "$HOME/.pi/agent"; fi
 
@@ -95,6 +95,13 @@ if ! plan="$(stow --no --target="$HOME" "${stow_packages[@]}" 2>&1)"; then
 fi
 log "linking dotfiles"
 stow --target="$HOME" "${stow_packages[@]}"
+
+# The hook runs on /usr/bin/python3; settings.json is edited in place because Claude Code also writes to it.
+if [ -x /usr/bin/python3 ]; then
+  /usr/bin/python3 "$repo/scripts/wire-claude-hooks.py" || echo "Claude guard hook not registered; fix ~/.claude/settings.json and re-run"
+else
+  echo "Skipping the Claude guard hook: /usr/bin/python3 was not found"
+fi
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   log "installing oh-my-zsh"

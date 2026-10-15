@@ -1,6 +1,6 @@
 PACKAGES := brew claude editorconfig git mise nvim tmux zsh
 
-.PHONY: plan stow unstow restow brew check
+.PHONY: plan stow unstow restow brew check test
 
 # show what stow would link and any conflicts, without changing anything
 plan:
@@ -17,6 +17,10 @@ restow:
 
 brew:
 	brew bundle --global
+
+# run the unit tests
+test:
+	/usr/bin/python3 -m unittest discover -s tests
 
 # scan for secrets and private terms before pushing
 check:

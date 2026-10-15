@@ -6,7 +6,7 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/). 
 |---|---|
 | `mise` | `.config/mise/config.toml` |
 | `brew` | `.Brewfile` (install with `make brew`) |
-| `claude` | `~/.claude/skills/*` |
+| `claude` | `~/.claude/skills/*`, `~/.claude/hooks/guard.py` |
 | `editorconfig` | `.editorconfig` (applies to every repo under `$HOME` that lacks its own) |
 | `git` | `.gitconfig`, `.config/git/ignore` |
 | `nvim` | `.config/nvim` (LazyVim) |
@@ -41,6 +41,10 @@ When it finishes:
 4. On macOS, install the runtimes pinned in `~/.config/mise/config.toml`: `mise install`
 
 On workstations where only `/home` survives a restart, the apt packages and login shell are reset. Re-run `scripts/bootstrap.sh` after a restart to restore them.
+
+## Claude Code guard
+
+`claude/.claude/hooks/guard.py` is a PreToolUse hook for Bash. It denies pushes to main, master and production, force-pushes without `--force-with-lease`, `gh api` writes, `gh pr comment/review/merge`, `gh issue comment`, `gh repo delete`, `gh secret set`, and `terraform apply/destroy/import/state`. Unlike a permission deny list it still runs when prompts are off. `scripts/bootstrap.sh` registers it in `~/.claude/settings.json` without touching other settings. To allow a rule, start Claude Code with `CLAUDE_GUARD_OVERRIDE=<rule>` set. A bare `git push` is not checked; the git `pre-push` hook covers it. Run `make test` after editing the hook.
 
 ## Files that stay out of the repo
 
